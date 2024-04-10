@@ -1,10 +1,6 @@
 include(Platform)
 
-if (${ALLINONE_BUILD})
-    set(SDK_ROOT "${UL_SDK_PATH}")
-else ()
-    message(FATAL_ERROR "TODO: Handle non-all-in-one build.")
-endif ()
+set(SDK_ROOT "${UL_SDK_PATH}")
 
 set(ULTRALIGHT_INCLUDE_DIR "${SDK_ROOT}/include")
 set(ULTRALIGHT_BINARY_DIR "${SDK_ROOT}/bin")

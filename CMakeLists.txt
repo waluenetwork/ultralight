@@ -20,11 +20,11 @@ add_subdirectory("Sample 9 - Multi Window")
 
 set(SAMPLES_TARGETS Sample1 Sample2 Sample3 Sample4 Sample5 Sample6 Sample7 Sample8 Sample9)
 
-foreach(target ${SAMPLES_TARGETS})
-    add_dependencies(${target} GenerateSDK)
-endforeach()
-
 if (${ALLINONE_BUILD})
+    foreach(target ${SAMPLES_TARGETS})
+        add_dependencies(${target} GenerateSDK)
+    endforeach()
+
     add_custom_target(install_samples ALL "${CMAKE_COMMAND}" 
         -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake" 
         DEPENDS ${SAMPLES_TARGETS}) 
