@@ -21,7 +21,7 @@ macro(add_console_app APP_NAME)
     link_directories("${ULTRALIGHT_LIBRARY_DIR}")
     link_libraries(UltralightCore Ultralight WebCore AppCore)
 
-    if (UL_PLATFORM MATCHES "MacOS")
+    if (UL_PLATFORM MATCHES "macos")
         SET(CMAKE_INSTALL_RPATH ".")
     endif ()
 
@@ -45,7 +45,9 @@ macro(add_app APP_NAME)
 
     add_executable(${APP_NAME} WIN32 MACOSX_BUNDLE ${ARGN})
 
-    if (UL_PLATFORM MATCHES "MacOS")
+    set(INSTALL_PATH "${INSTALL_DIR}/${APP_NAME}")
+
+    if (UL_PLATFORM MATCHES "macos")
         # Include Entitlements.plist
         set_source_files_properties(${ENTITLEMENTS_PLIST_PATH} PROPERTIES MACOSX_PACKAGE_LOCATION "Contents")
 
@@ -59,57 +61,36 @@ macro(add_app APP_NAME)
             MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
             MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST_PATH}
         )
+        
+        # Set the install destination for the app bundle
+        set(BUNDLE_INSTALL_PATH "${INSTALL_PATH}/${APP_NAME}.app")
+        set(BUNDLE_EXEC_PATH "${BUNDLE_INSTALL_PATH}/Contents/MacOS")
+        set(BUNDLE_RESOURCE_PATH "${BUNDLE_INSTALL_PATH}/Contents/Resources")
+        set(BUNDLE_ASSETS_PATH "${BUNDLE_RESOURCE_PATH}/assets")
 
-        set(INSTALL_PATH "${INSTALL_DIR}/${APP_NAME}.app")
-        set(BUNDLE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${APP_NAME}.app)
-    
-        configure_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/FixBundle.cmake.in
-            ${CMAKE_CURRENT_BINARY_DIR}/FixBundle.cmake
-            @ONLY
-            )
-    
-        install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/FixBundle.cmake)
-    
-        # TODO: Handle code signing 
-        set(CPACK_GENERATOR "BUNDLE")
-        set(CPACK_BUNDLE_APPLE_ENTITLEMENTS ${ENTITLEMENTS_PLIST_PATH})
-
-        include(CPack)
-    
-        set(ASSET_PATH "${BUNDLE_PATH}/Contents/Resources/assets")
-
-        # Install Entitlements.plist to the Contents folder of the app bundle
-        INSTALL(FILES ${ENTITLEMENTS_PLIST_PATH} DESTINATION "${BUNDLE_PATH}/Contents")
-    
-        INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "${ASSET_PATH}" OPTIONAL)
-        INSTALL(DIRECTORY "${ULTRALIGHT_RESOURCES_DIR}" DESTINATION "${ASSET_PATH}")
+        install(TARGETS ${APP_NAME} BUNDLE DESTINATION "${INSTALL_PATH}")
+            
+        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "${BUNDLE_ASSETS_PATH}" OPTIONAL)
+        install(DIRECTORY "${ULTRALIGHT_RESOURCES_DIR}" DESTINATION "${BUNDLE_ASSETS_PATH}")
         if (NEEDS_INSPECTOR)
-            INSTALL(DIRECTORY "${ULTRALIGHT_INSPECTOR_DIR}" DESTINATION "${ASSET_PATH}")
+            install(DIRECTORY "${ULTRALIGHT_INSPECTOR_DIR}" DESTINATION "${BUNDLE_ASSETS_PATH}")
         endif ()
-    
-        INSTALL(TARGETS ${APP_NAME}
-            RUNTIME DESTINATION "${INSTALL_PATH}" PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-            BUNDLE  DESTINATION "${INSTALL_DIR}" PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-            )
+        install(DIRECTORY "${ULTRALIGHT_BINARY_DIR}/" DESTINATION "${BUNDLE_EXEC_PATH}")
     else ()
-
-        if (UL_PLATFORM MATCHES "Windows")
+        if (UL_PLATFORM MATCHES "windows")
             # Use main instead of WinMain for Windows subsystem executables
             set_target_properties(${APP_NAME} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
         endif()
 
-        set(INSTALL_PATH "${INSTALL_DIR}/${APP_NAME}")
+        set(ASSETS_PATH "${INSTALL_PATH}/assets")
+        set(BIN_PATH "${INSTALL_PATH}")
 
-        INSTALL(TARGETS ${APP_NAME}
-            RUNTIME DESTINATION "${INSTALL_PATH}"
-            BUNDLE  DESTINATION "${INSTALL_PATH}")
-
-        INSTALL(DIRECTORY "${ULTRALIGHT_BINARY_DIR}/" DESTINATION "${INSTALL_PATH}")
-        INSTALL(DIRECTORY "${ULTRALIGHT_RESOURCES_DIR}" DESTINATION "${INSTALL_PATH}/assets")
+        install(TARGETS ${APP_NAME} RUNTIME DESTINATION "${INSTALL_PATH}")
+        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "${ASSETS_PATH}" OPTIONAL)
+        install(DIRECTORY "${ULTRALIGHT_RESOURCES_DIR}" DESTINATION "${ASSETS_PATH}")
         if (NEEDS_INSPECTOR)
-            INSTALL(DIRECTORY "${ULTRALIGHT_INSPECTOR_DIR}" DESTINATION "${INSTALL_PATH}/assets")
+            install(DIRECTORY "${ULTRALIGHT_INSPECTOR_DIR}" DESTINATION "${ASSETS_PATH}")
         endif ()
-        INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "${INSTALL_PATH}/assets" OPTIONAL)
+        install(DIRECTORY "${ULTRALIGHT_BINARY_DIR}/" DESTINATION "${BIN_PATH}")
     endif ()
 endmacro ()
