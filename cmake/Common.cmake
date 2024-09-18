@@ -1,5 +1,9 @@
 include(Platform)
 
+if (${UL_ENABLE_STATIC_BUILD})
+    include(StaticLibs)
+endif ()
+
 set(SDK_ROOT "${UL_SDK_PATH}")
 
 set(ULTRALIGHT_INCLUDE_DIR "${SDK_ROOT}/include")
@@ -17,11 +21,18 @@ macro(add_console_app APP_NAME)
     link_directories("${ULTRALIGHT_LIBRARY_DIR}")
     link_libraries(UltralightCore Ultralight WebCore AppCore)
 
+    if (${UL_ENABLE_STATIC_BUILD})
+        link_libraries(${UL_STATIC_LIBS})
+    endif ()
+
     if (UL_PLATFORM MATCHES "macos")
         SET(CMAKE_INSTALL_RPATH ".")
     endif ()
 
     add_executable(${APP_NAME} ${ARGN})
+
+    # Always link to the C++ standard library
+    set_target_properties(${APP_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
     set(INSTALL_PATH "${INSTALL_DIR}/${APP_NAME}")
 
@@ -39,7 +50,14 @@ macro(add_app APP_NAME)
     link_directories("${ULTRALIGHT_LIBRARY_DIR}")
     link_libraries(UltralightCore AppCore Ultralight WebCore)
 
+    if (${UL_ENABLE_STATIC_BUILD})
+        link_libraries(${UL_STATIC_LIBS} ${APPCORE_STATIC_LIBS})
+    endif ()
+
     add_executable(${APP_NAME} WIN32 MACOSX_BUNDLE ${ARGN})
+
+    # Always link to the C++ standard library
+    set_target_properties(${APP_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
     set(INSTALL_PATH "${INSTALL_DIR}/${APP_NAME}")
 
