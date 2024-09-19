@@ -22,6 +22,7 @@ macro(add_console_app APP_NAME)
     link_libraries(UltralightCore Ultralight WebCore AppCore)
 
     if (${UL_ENABLE_STATIC_BUILD})
+        add_definitions(-DULTRALIGHT_STATIC_BUILD)
         link_libraries(${UL_STATIC_LIBS})
     endif ()
 
@@ -51,6 +52,7 @@ macro(add_app APP_NAME)
     link_libraries(UltralightCore AppCore Ultralight WebCore)
 
     if (${UL_ENABLE_STATIC_BUILD})
+        add_definitions(-DULTRALIGHT_STATIC_BUILD)
         link_libraries(${UL_STATIC_LIBS} ${APPCORE_STATIC_LIBS})
     endif ()
 
