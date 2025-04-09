@@ -50,7 +50,7 @@ void Init() {
   /// Create default settings/config
   ///
   ULSettings settings = ulCreateSettings();
-  ulSettingsSetForceCPURenderer(settings, true);
+
   ULConfig config = ulCreateConfig();
 
   ///
