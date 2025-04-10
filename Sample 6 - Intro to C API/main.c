@@ -50,7 +50,6 @@ void Init() {
   /// Create default settings/config
   ///
   ULSettings settings = ulCreateSettings();
-
   ULConfig config = ulCreateConfig();
 
   ///
