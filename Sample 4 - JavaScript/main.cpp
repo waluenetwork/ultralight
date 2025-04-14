@@ -161,7 +161,7 @@ const char* htmlString() {
     <style type="text/css">
       * { -webkit-user-select: none; }
       body { 
-        font-family: -apple-system, 'Segoe UI', Ubuntu, Arial, sans-serif; 
+        font-family: -apple-system, 'Segoe UI', Arial, sans-serif; 
         text-align: center;
         background: linear-gradient(#FFF, #DDD);
         padding: 2em;
