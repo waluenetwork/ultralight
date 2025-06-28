@@ -18,8 +18,9 @@ add_subdirectory("Sample 6 - Intro to C API")
 add_subdirectory("Sample 7 - OpenGL Integration")
 add_subdirectory("Sample 8 - Web Browser")
 add_subdirectory("Sample 9 - Multi Window")
+add_subdirectory("fpstest")
 
-set(SAMPLES_TARGETS Sample1 Sample2 Sample3 Sample4 Sample5 Sample6 Sample7 Sample8 Sample9)
+set(SAMPLES_TARGETS Sample1 Sample2 Sample3 Sample4 Sample5 Sample6 Sample7 Sample8 Sample9 fpstest)
 
 if (${ALLINONE_BUILD})
     foreach(target ${SAMPLES_TARGETS})
