@@ -1,1 +1,1 @@
-add_app(Sample5 main.cpp)
+add_app(Sample5 SOURCES main.cpp)

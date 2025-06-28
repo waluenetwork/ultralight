@@ -24,4 +24,4 @@ set(SOURCES "src/Sample.h"
             "src/GLTextureSurface.cpp"
             "src/main.cpp")
 
-add_app(Sample7 ${SOURCES} ${GLAD_SOURCES})
+add_app(Sample7 SOURCES ${SOURCES} ${GLAD_SOURCES})
